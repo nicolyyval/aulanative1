@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 
@@ -7,39 +7,61 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
 
   const addTask = () => {
-	  if (task.trim().length > 0) {
-	    setTasks([...tasks, { id: Math.random().toString(),
-      value: task 
+    if (task.trim().length > 0) {
+      setTasks([...tasks, {
+        id: Math.random().toString(),
+        value: task
       }]);
-	    setTask("");
-	  }
-	};
+      setTask("");
+    }
+  };
 
-	return (
-<View style={styles.container}>
-  <View style={styles.form}>
-    <TextInput
-      placeholder="Digite uma nova tarefa"
-      style={styles.inputline}
-      onChangeText={setTask}
-      value={task}
-    />
-    <TouchableOpacity onPress={addTask}
-      style={styles.button}
+  const removeTask = (taskId) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.form}>
+        <TextInput
+          placeholder="Digite uma nova tarefa"
+          style={styles.inputline}
+          onChangeText={setTask}
+          value={task}
+        />
+        <TouchableOpacity onPress={addTask}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Adicionar</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.listitle}>
+        {tasks.length === 0 ? (
+          <Text style={styles.emptylist}>Nenhuma Tarefa Cadastrada</Text>
+        ) : (
+          <Text style={styles.filledlist}>Tarefas Cadastradas</Text>
+        )}
+      </View>
+
+      <ScrollView style={styles.scrollist} showsVerticalScrollIndicator={false}>
+      {tasks.map((task) => (
+    <View
+      key={task.id}
+      style={styles.listitem}
     >
-      <Text style={styles.buttonText}>Adicionar</Text>
-    </TouchableOpacity>
-  </View>
-  <View style={styles.listitle}>
-  {tasks.length === 0 ? (
-    <Text style={styles.emptylist}>Nenhuma Tarefa Cadastrada</Text>
-  ) : (
-    <Text style={styles.filledlist}>Tarefas Cadastradas</Text>
-  )}
-</View>
-  <StatusBar style="auto" />
-</View>
-	);
+      <Text style={styles.withtext}>{task.value}</Text>
+      <TouchableOpacity
+        onPress={() => removeTask(task.id)}
+        style={styles.remove}
+      >
+        <Text style={styles.buttonText}>Remover</Text>
+      </TouchableOpacity>
+    </View>
+  ))}
+</ScrollView>
+      <StatusBar style="auto" />
+    </View>
+  );
 }
 const styles = StyleSheet.create({
   padding: {
@@ -75,7 +97,7 @@ const styles = StyleSheet.create({
   },
   listitle: {
     marginBottom: 10,
-  }, 
+  },
   emptylist: {
     textAlign: "center",
     color: "red",
@@ -83,5 +105,30 @@ const styles = StyleSheet.create({
   filledlist: {
     textAlign: "center",
     color: "green",
+  },
+  scrollist: {
+    marginBottom: 24,
+  },
+  listitem: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    paddingBottom: 5,
+    width: "80%",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  withtext: {
+    width: "75%",
+  },
+  remove: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 5,
+    color: "#fff",
   },
 });
